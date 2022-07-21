@@ -77,13 +77,13 @@ for each_graph in groups:
     #print(dependency_cur_graph)
     cycle=find_node_without_parent(dependency_cur_graph)
     #print(cycle)
-    while cycle  is None:
+    while True:
         cut_node = find_node_to_break_cycle(dependency_cur_graph)
         #print(cut_node)
         pair_node=delete_connection_between_two_nodes(current_graph,cut_node,dependency_cur_graph)
         #print(cut_node,pair_node)
         all_pair_for_removing.append((cut_node,pair_node))
-        break
+
     #print(dependency_cur_graph)
 
 
