@@ -4,7 +4,6 @@ def dfs(node, graph, visited):
     visited.append(node)
     for kids in graph[node]:
         dfs(kids, graph, visited)
-
     return visited
 
 
