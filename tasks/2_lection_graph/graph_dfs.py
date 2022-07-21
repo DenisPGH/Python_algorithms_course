@@ -16,16 +16,12 @@ graph={
     2:[3],
     3:[],
     4:[],
-    5:[]
+
 }
 
 
 
 visited=[]
-
-
-
-
 
 for node in graph:
     a=dfs(node,graph,visited)
