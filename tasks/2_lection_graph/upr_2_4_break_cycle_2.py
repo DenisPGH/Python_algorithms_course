@@ -1,23 +1,52 @@
-#graph={'K': ['X', 'J'], 'J': ['K', 'N'], 'N': ['J', 'X', 'L', 'M'], 'X': ['K', 'N', 'Y'], 'M': ['N', 'I'], 'Y': ['X', 'L'], 'L': ['N', 'I', 'Y'], 'I': ['M', 'L'], 'A': ['Z', 'Z', 'Z'], 'Z': ['A', 'A', 'A'], 'F': ['E', 'B', 'P'], 'E': ['F', 'P'], 'P': ['B', 'F', 'E'], 'B': ['F', 'P']}
-graph={1:[2,5],2:[3],3:[4],4:[],5:[]}
-def dfs(node, graph, visited,path):
+def dfs_find_all_members(node,destination, graph, visited):
     if node in visited:
         return
-    visited.append(node)
-    path.clear()
+    visited.add(node)
+    if node==destination:
+        return
     for kids in graph[node]:
-        dfs(kids, graph, visited,path)
-        path.add(kids)
-        print(path)
-    return path
+        dfs_find_all_members(kids, destination,graph, visited)
 
 
-visited=[]
-for node in graph:
-    path=set()
-    a=dfs(node,graph,visited,path)
-    #print(a)
-    # if a != None:
-    #     print(a)
+def path_exist(source, destination,graph):
+    visited=set()
+    dfs_find_all_members(source, destination, graph, visited)
+    return  destination in visited
 
 
+count_nodes=int(input())
+graph={}
+egdes=[]
+# store in the graph
+for node in range(count_nodes):
+    v,e=input().split(" -> ")
+    children=[] if e=="" else [x for x in e.split(' ')]
+    graph[v]=children
+    for child in children:
+        egdes.append((v,child))
+
+
+# print(graph)
+# print(egdes)
+
+removed_edges=[]
+
+
+for source, destination in sorted(egdes,key=lambda x: (x[0],x[1])):
+    if destination not in graph[source] or source not in graph[destination]:
+        continue
+    graph[source].remove(destination)
+    graph[destination].remove(source)
+
+    if path_exist(source,destination,graph):
+        #print(source,destination)
+        removed_edges.append((source,destination))
+    else:
+        graph[source].append(destination)
+        graph[destination].append(source)
+
+
+
+print(f"Edges to remove: {len(removed_edges)}")
+for a,b in removed_edges:
+    print(f"{a} - {b}")
