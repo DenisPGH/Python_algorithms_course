@@ -21,34 +21,39 @@ def store_in_graph(matrix):
     return graph
 
 
-matrix=[]
-value_nodes=int(input())
-for a in range(value_nodes):
-    matrix.append(list(input()))
+# matrix=[]
+# value_nodes=int(input())
+# for a in range(value_nodes):
+#     matrix.append(list(input()))
 
 
-# matrix=['NNYN',
-# 'NNYN',
-# 'NNNN',
-# 'NYYN'
-# ]
-# matrix=[list(x) for x in matrix]
+matrix=['NNYN',
+'NNYN',
+'NNNN',
+'NYYN'
+]
+matrix=[list(x) for x in matrix]
 graph=store_in_graph(matrix)
 #print(graph)
 
 
-def calc_salary_from_children(node,graph):
+def calc_salary_from_children(node,graph,salaries):
+    if salaries[node] is not None:
+        return salaries[node]
     salary=0
     if graph[node]==[]:
         return 1
     for child in graph[node]:
-        salary+=calc_salary_from_children(child,graph)
+        salary+=calc_salary_from_children(child,graph,salaries)
+
+    salaries[node]=salary
     return salary
 
 
 sum_all_salaries=0
+salaries=[None]* len(graph)
 for node in graph:
-    salary=calc_salary_from_children(node, graph)
+    salary=calc_salary_from_children(node, graph,salaries)
     sum_all_salaries+=salary
     #print(salary)
 
