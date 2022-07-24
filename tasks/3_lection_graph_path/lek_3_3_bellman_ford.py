@@ -1,5 +1,22 @@
 from collections import  deque
 
+def store_data_to_graph(edges):
+    graph = []
+    """
+    :param edges: count of the edges in the graph
+    :param graph: empty graph
+    :return:  filled graph with nodes, and their information
+    """
+    for _ in range(edges):
+        source, destination, weight = [int(x) for x in input().split(" ")]
+        # if source not in graph:
+        #     graph[source] = []
+        # if destination not in graph:
+        #     graph[destination] = []
+        graph.append(Edge(source, destination, weight))
+
+    return graph
+
 
 def find_all_ways(graph,nodes):
     """
@@ -38,21 +55,7 @@ def generate_path_source_to_target(target_,parents):
     return path
 
 
-def store_data_to_graph(edges,graph:list):
-    """
-    :param edges: count of the edges in the graph
-    :param graph: empty graph
-    :return:  filled graph with nodes, and their information
-    """
-    for _ in range(edges):
-        source, destination, weight = [int(x) for x in input().split(" ")]
-        # if source not in graph:
-        #     graph[source] = []
-        # if destination not in graph:
-        #     graph[destination] = []
-        graph.append(Edge(source, destination, weight))
 
-    return graph
 
 
 class Edge:
@@ -62,11 +65,9 @@ class Edge:
         self.weight = weight
 
 
-graph=[]
 nodes=int(input()) # give here value of the nodes
 edges=int(input()) # give here value of the edges
-
-graph=store_data_to_graph(edges,graph)
+graph=store_data_to_graph(edges)
 start=int(input()) # declare the start point
 target=int(input()) # declare the target point
 
