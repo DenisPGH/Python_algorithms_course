@@ -2,8 +2,14 @@ from collections import deque
 
 
 def find_shortest_way(start_node,destination_node,graph,nodes):
-    visited = [False] * (nodes + 1)
-    parent = [None] * (nodes + 1)
+    visited={}
+    parent={}
+    for n in graph:
+        visited[n]=False
+        parent[n]=None
+    #visited = [False] * (nodes + 1)
+
+    #parent = [None] * (nodes + 1)
     visited[start_node] = True
     queue_ = deque([start_node])
     while queue_:
