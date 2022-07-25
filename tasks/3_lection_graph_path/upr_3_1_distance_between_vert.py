@@ -12,7 +12,7 @@ def find_shortest_way(start_node,destination_node,graph,nodes):
             break
         for child in graph[node]:
             if child == None:
-                return
+                break
             if visited[child]:
                 continue
             visited[child] = True
@@ -35,11 +35,12 @@ nodes=int(input())
 pairs=(int(input()))
 graph={}
 for _ in range(nodes):
-    source,destination=[x for x in input().split(":")]
+    source,destination=input().split(":")
+    destination=destination.split(" ")
     if source not in graph:
         graph[int(source)]=[]
-    if destination.isdigit():
-        graph[int(source)].append(int(destination))
+    if destination[0] !="":
+        graph[int(source)].extend([int(x) for x in destination])
     else:
         graph[int(source)].append(None)
 
@@ -56,8 +57,9 @@ for pair in range(pairs):
 for couple in all_couples:
     a,b=couple
     parent=find_shortest_way(a, b, graph, nodes)
-    if parent != None:
-        path=store_path(parent, b)
+    path=store_path(parent, b)
+    #print(path)
+    if len(path)>1:
         print(f"{{{a}, {b}}} -> {len(path)-1}")
     else:
         print(f"{{{a}, {b}}} -> -1")
