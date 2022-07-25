@@ -13,7 +13,7 @@ def create_graph(edges):
     return graph
 
 
-def find_shortest_way(nodes):
+def find_shortest_way(start_node,destination_node,graph,nodes):
     visited = [False] * (nodes + 1)
     parent = [None] * (nodes + 1)
     visited[start_node] = True
@@ -50,7 +50,7 @@ edges=int(input())
 graph= create_graph(edges)
 start_node=int(input())
 destination_node=int(input())
-_,parent=find_shortest_way(nodes)
+_,parent=find_shortest_way(start_node,destination_node,graph,nodes)
 path_to_target=print_way(parent)
 print(f"Shortest path length is: {len(path_to_target)-1}")
 print(*path_to_target,sep=' ')
