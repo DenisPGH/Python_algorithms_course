@@ -14,32 +14,28 @@ def store_data_to_graph(edges,graph):
         if destination not in graph:
             graph[destination] = []
         graph[source].append(Edge(source, destination, weight))
-        #graph[destination].append(Edge(source, destination, weight))
+        graph[destination].append(Edge(destination,source , weight))
 
     return graph
 
-def find_all_ways(nodes,target,graph):
+def find_all_ways(start,nodes,target,graph):
     percent={}
     parents={}
-    val='val'
-    node_counter="node_counter"
     for nod in graph:
-        percent[nod]={}
-        percent[nod][val]=float('-inf')
-        percent[nod][node_counter]=0
+        percent[nod]=float('-inf')
         parents[nod]=None
-    percent[start] = 0  # declare the start node with distance 0
-    #pq = PriorityQueue()
+    percent[start] = 100
     pq = DualPriorityQueue(maxPQ=True)
     pq.put(0, start)
     while not pq.empty():
-        min_distance_to_the_node, node = pq.get()  # get the min value in the queue
+        max_percent, node = pq.get()  # get the min value in the queue
+        print(max_percent)
         if node == target:
             break
         for edge in graph[node]:
-            new_distance = min_distance_to_the_node + edge.weight
-            if new_distance > percent[edge.destination][val]:
-                percent[edge.destination][val] = new_distance
+            new_distance = max_percent + edge.weight
+            if new_distance > percent[edge.destination]:
+                percent[edge.destination] = new_distance
                 parents[edge.destination] = node
                 pq.put(new_distance, edge.destination)
     return percent, parents
@@ -93,21 +89,21 @@ graph={}
 nodes=int(input()) #
 edges=int(input()) #
 graph=store_data_to_graph(edges,graph)
-start=int(input()) # declare the start point
+start_=int(input()) # declare the start point
 target=int(input()) # declare the target point
 
-print(graph)
-distances,parents=find_all_ways(nodes,target,graph)
-print(distances)
-print(parents)
+#print(graph)
+percents,parents=find_all_ways(start_,nodes,target,graph)
+print(percents)
+#print(parents)
 
-if distances[target]== float('inf'):
+if percents[target]== float('inf'):
     print('There is no such path') # return no mach
 
 else:
 
     path=list(generate_path_source_to_target(target,parents))
-    print(f"Most reliable path reliability: {(distances[target]['val'] /len(path)):.2f}%")
+    print(f"Most reliable path reliability: {(percents[target] /(len(path)-1)):.2f}%")
     print(*path,sep=" -> ")
 
 
