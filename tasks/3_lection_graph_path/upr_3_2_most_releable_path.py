@@ -14,30 +14,39 @@ def store_data_to_graph(edges,graph):
         if destination not in graph:
             graph[destination] = []
         graph[source].append(Edge(source, destination, weight))
-        graph[destination].append(Edge(destination,source , weight))
+        graph[destination].append(Edge(source, destination, weight))
+        #graph[destination].append(Edge(destination,source , weight))
 
     return graph
 
 def find_all_ways(start,nodes,target,graph):
     percent={}
     parents={}
+    visited={}
     for nod in graph:
         percent[nod]=float('-inf')
         parents[nod]=None
+        visited[nod]=False
     percent[start] = 100
-    pq = DualPriorityQueue(maxPQ=True)
-    pq.put(0, start)
+    #pq = DualPriorityQueue(maxPQ=True)
+    pq=PriorityQueue()
+    pq.put((-100, start))
     while not pq.empty():
-        max_percent, node = pq.get()  # get the min value in the queue
-        print(max_percent)
-        if node == target:
+        max_percent, node = pq.get()  # get the max value in the queue
+        #print(max_percent)
+        if node==target:
             break
+        #print(percent)
         for edge in graph[node]:
-            new_distance = max_percent + edge.weight
-            if new_distance > percent[edge.destination]:
-                percent[edge.destination] = new_distance
-                parents[edge.destination] = node
-                pq.put(new_distance, edge.destination)
+            child=edge.destination if edge.source==node else edge.source
+            # if visited[node] != False:
+            #     continue
+            new_distance = -max_percent * edge.weight /100
+            if new_distance > percent[child]:
+                percent[child] = new_distance
+                parents[child] = node
+                # visited[edge.source]=True
+                pq.put((-new_distance, child))
     return percent, parents
 
 
@@ -94,7 +103,7 @@ target=int(input()) # declare the target point
 
 #print(graph)
 percents,parents=find_all_ways(start_,nodes,target,graph)
-print(percents)
+#print(percents)
 #print(parents)
 
 if percents[target]== float('inf'):
@@ -103,7 +112,7 @@ if percents[target]== float('inf'):
 else:
 
     path=list(generate_path_source_to_target(target,parents))
-    print(f"Most reliable path reliability: {(percents[target] /(len(path)-1)):.2f}%")
+    print(f"Most reliable path reliability: {(percents[target]):.2f}%")
     print(*path,sep=" -> ")
 
 
