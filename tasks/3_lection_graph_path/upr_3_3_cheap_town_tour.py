@@ -70,9 +70,13 @@ def find_all_ways_cheapest(start,target,graph):
     pq.put((0,start))
     visited[start]=True
     cycle=False
+    sum_path=0
     while not pq.empty():
         min_distance_to_the_node,node=pq.get() # get the min value in the queue
+        # if node ==target:
+        #     break
         for edge in graph[node]:
+            #if node == edge:
             if all([x for x in visited.values()]):
                 cycle=True
                 break
@@ -80,17 +84,20 @@ def find_all_ways_cheapest(start,target,graph):
 
             new_distance= min_distance_to_the_node+edge.weight
             if new_distance < distances[child]:
+                sum_path+=new_distance
                 distances[child]=new_distance
                 parents[child]=node
                 visited[child]=True
                 pq.put((new_distance,child))
-                print(visited)
-
+            #print(visited)
+        # if all([x for x in visited.values()]):
+        #     return distances, parents
 
 
         if cycle:
             # got cycle
             break
+    #print(sum_path)
     return distances,parents
 
 
@@ -99,21 +106,57 @@ streets=5 #int(input()) #
 graph=my_input_data_to_graph(streets)
 #print(graph)
 dict_min_value_pair={}
-
+town_pair=[]
+counter=0
+#while True:
 for town in graph:
-    print(town)
+    counter+=1
+    if counter>5:
+        break
+    #print(town)
+    #town=0
+
     from_town=town
     to_town=town
     costs,parents=find_all_ways_cheapest(from_town,to_town,graph)
+    #a=max(costs.items())[1]
+    #a=min(costs.values())
+    smallest_value=min(i for i in costs.values() if i > 0)
+    next_town=''
+    for k,v in sorted(costs.items(),key=lambda x: (x[1])):
+        if v==0:
+            continue
+        next_town=k
+        break
+
+    print(f"now go to {next_town}")
+    #town=next_town
 
     print(costs)
 
+
+
+#print(dict_min_value_pair)
+#print(town_pair)
+
+# visited=[True,True]
+# if all([x for x in visited]):
+#     raise Exception('all visited')
+
+""""
+    for each_town in costs:
+       #print(each_town)
+        #pair=f"{min(town,each_town)}-{max(each_town,town)}"
+        pair=f"{town}-{each_town}"
+        if pair not in dict_min_value_pair:
+            dict_min_value_pair[pair]=0
+        if costs[each_town]>dict_min_value_pair[pair]:
+            dict_min_value_pair[pair]=costs[each_town]
+            town_pair.append({pair:costs[each_town]})
+            #print(path)
     #print(sum(costs.values()))
     #print(parents)
-
-
-
-
+"""
 
 
 
