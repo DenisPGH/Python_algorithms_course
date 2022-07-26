@@ -36,8 +36,8 @@ def my_input_data_to_graph(edges):
         if destination not in graph:
             graph[destination] = []
         graph[source].append(Edge(source, destination, weight))
-        graph[destination].append(Edge(source, destination, weight))
-        #graph[destination].append(Edge( destination,source, weight))
+        #graph[destination].append(Edge(source, destination, weight))
+        graph[destination].append(Edge( destination,source, weight))
 
     return graph
 
@@ -55,8 +55,46 @@ def store_data_to_graph(edges):
 
     return graph
 
-def find_all_ways_cheapest(start,target,graph):
+def find_all_ways_cheapest(start,graph):
+    distances = {}
+    parents = {}
+    visited = {}
+    path=[]
+    for nod in graph:
+        distances[nod] = float('inf')
+        parents[nod] = None
+        visited[nod] = False
+    start_value_of_the_node = float('inf')
+    distances[start]=0# declare the start node with distance 0
+    pq=PriorityQueue()
+    pq.put((0,start))
+    visited[start]=True
+    cycle=False
+    while not pq.empty():
+        min_distance_to_the_node,node=pq.get() # get the min value in the queue
+        for edge in graph[node]:
+            if all([x for x in visited.values()]):
+                cycle=True
+                break
+            child = edge.destination if edge.source == node else edge.source
+            new_distance= min_distance_to_the_node+edge.weight
 
+            #print(new_distance,distances[node])
+            if new_distance < distances[child]:
+                distances[child]=new_distance
+                parents[child]=node
+                visited[child]=True
+                pq.put((new_distance,child))
+
+        if cycle:
+            break
+    return distances
+
+
+def print_all_ways_in_graph(start,graph,visited,all_paths):
+    if all(x for x in visited.values()):
+        return all_paths
+    all_paths=[]
     distances = {}
     parents = {}
     visited = {}
@@ -64,41 +102,17 @@ def find_all_ways_cheapest(start,target,graph):
         distances[nod] = float('inf')
         parents[nod] = None
         visited[nod] = False
-
-    distances[start]=0 # declare the start node with distance 0
-    pq=PriorityQueue()
-    pq.put((0,start))
     visited[start]=True
-    cycle=False
-    sum_path=0
-    while not pq.empty():
-        min_distance_to_the_node,node=pq.get() # get the min value in the queue
-        # if node ==target:
-        #     break
-        for edge in graph[node]:
-            #if node == edge:
-            if all([x for x in visited.values()]):
-                cycle=True
-                break
-            child = edge.destination if edge.source == node else edge.source
-
-            new_distance= min_distance_to_the_node+edge.weight
-            if new_distance < distances[child]:
-                sum_path+=new_distance
-                distances[child]=new_distance
-                parents[child]=node
-                visited[child]=True
-                pq.put((new_distance,child))
-            #print(visited)
-        # if all([x for x in visited.values()]):
-        #     return distances, parents
-
-
-        if cycle:
-            # got cycle
-            break
-    #print(sum_path)
-    return distances,parents
+    dist=''
+    start_value=float('inf')
+    for child in graph[start]:
+        if child.weight<start_value:
+            start_value=child.weight
+            dist=child.destination
+        print(child.destination)
+    all_paths.append(dist)
+    print_all_ways_in_graph(dist,graph,visited,all_paths)
+    return all_paths
 
 
 towns=4 #int(input()) #
@@ -107,56 +121,16 @@ graph=my_input_data_to_graph(streets)
 #print(graph)
 dict_min_value_pair={}
 town_pair=[]
+all_paths=[]
+visited={}
 counter=0
-#while True:
 for town in graph:
-    counter+=1
-    if counter>5:
-        break
-    #print(town)
-    #town=0
-
     from_town=town
-    to_town=town
-    costs,parents=find_all_ways_cheapest(from_town,to_town,graph)
-    #a=max(costs.items())[1]
-    #a=min(costs.values())
-    smallest_value=min(i for i in costs.values() if i > 0)
-    next_town=''
-    for k,v in sorted(costs.items(),key=lambda x: (x[1])):
-        if v==0:
-            continue
-        next_town=k
-        break
+    #costs=find_all_ways_cheapest(from_town,graph)
+    costs=print_all_ways_in_graph(from_town,graph,visited,all_paths)
+    print(f"{town}=={costs}")
 
-    print(f"now go to {next_town}")
-    #town=next_town
-
-    print(costs)
-
-
-
-#print(dict_min_value_pair)
-#print(town_pair)
-
-# visited=[True,True]
-# if all([x for x in visited]):
-#     raise Exception('all visited')
-
-""""
-    for each_town in costs:
-       #print(each_town)
-        #pair=f"{min(town,each_town)}-{max(each_town,town)}"
-        pair=f"{town}-{each_town}"
-        if pair not in dict_min_value_pair:
-            dict_min_value_pair[pair]=0
-        if costs[each_town]>dict_min_value_pair[pair]:
-            dict_min_value_pair[pair]=costs[each_town]
-            town_pair.append({pair:costs[each_town]})
-            #print(path)
-    #print(sum(costs.values()))
     #print(parents)
-"""
 
 
 
