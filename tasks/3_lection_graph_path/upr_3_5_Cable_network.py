@@ -20,6 +20,9 @@ def fill_graph(edges):
             edge = Edge(first, second, weight)
         else:
             edge = Edge(first, second, weight,True)
+            all_connected_nodes.add(first)
+            all_connected_nodes.add(second)
+            network.append((first,second))
 
         if first not in graph:
             graph[first] = []
@@ -28,12 +31,16 @@ def fill_graph(edges):
 
         graph[first].append(edge)
         graph[second].append(edge)
+
     return graph
 
 def prim(node,graph,forest,forest_edges):
+    #if node not in all_connected_nodes:
     forest.add(node)
     pq=PriorityQueue()
     for edge in graph[node]:
+        if (edge.first,edge.second) in network:
+            continue
         pq.put(edge)
     while not pq.empty():
         min_edge=pq.get()
@@ -46,13 +53,20 @@ def prim(node,graph,forest,forest_edges):
             non_tree_node=min_edge.first
         if non_tree_node==-1:
             continue
-        forest.add(non_tree_node)
-        print(non_tree_node)
-        if min_edge.connected==False:
-            forest_edges.append(min_edge)
+        if non_tree_node in all_connected_nodes:
+            forest.add(non_tree_node)
+            all_connected_nodes.add(node)
+            network.append((node,non_tree_node))
+        #if min_edge.connected==False: #and min_edge.first not in all_connected_nodes and min_edge.second not in all_connected_nodes:
+        #if (node,non_tree_node) not in network:
+        if (min_edge.first,min_edge.second) not in network:
+            continue
+        forest_edges.append(min_edge)
+        #print(min_edge.first,min_edge.second)
         #print(forest_edges)
         for edge in graph[non_tree_node]:
-            pq.put(edge)
+            if (edge.first,edge.second) not in network:
+                pq.put(edge)
 
 
 
@@ -60,17 +74,28 @@ def prim(node,graph,forest,forest_edges):
 budget=int(input())
 nodes=int(input())
 edges=int(input())
+all_connected_nodes=set()
+network=[]
 graph=fill_graph(edges)
 #print(graph)
-
+#print(all_connected_nodes)
+#print(network)
 forest=set()
 forest_edges=[]
-for node in graph:
+for node,edges_ in graph.items():
+    if node in all_connected_nodes:
+        continue
     # if node in forest:
     #     print(node)
     #     continue
     prim(node,graph,forest,forest_edges)
 
+sum=0
+for edge in sorted(forest_edges,key= lambda x:( x.weight)):
+    if edge.weight<=budget:
+        budget-=edge.weight
+        sum+=edge.weight
+    #print(f"{edge.first} - {edge.second}==weight=  {edge.weight}")
 
-for edge in forest_edges:
-    print(f"{edge.first} - {edge.second}==weight=  {edge.weight}")
+print(f"Budget used: {sum}")
+
