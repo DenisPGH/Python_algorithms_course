@@ -67,25 +67,29 @@ def prim_old(node,graph,forest,forest_edges):
                 pq.put(edge)
 
 
-def prim(node,graph,forest,forest_edges):
-    forest.add(node)
+def prim(forest,graph,):
+    used_budget=0
     pq=PriorityQueue()
-    for edge in graph[node]:
-        if edge.connected==False:
+    for node in forest:
+        for edge in graph[node]:
             pq.put(edge)
     while not pq.empty():
         min_edge=pq.get()
-        non_tree_node=-1
-        if min_edge.first in forest and min_edge.second not in forest and min_edge.first not in all_connected_nodes:
+        non_tree_node=None
+        if min_edge.first in forest and min_edge.second not in forest:
             non_tree_node=min_edge.second
-        elif min_edge.second in forest and min_edge.first not in forest and min_edge.first not in all_connected_nodes:
+        elif min_edge.second in forest and min_edge.first not in forest:
             non_tree_node=min_edge.first
-        if non_tree_node==-1:
+        if non_tree_node==None :
             continue
+        if used_budget+min_edge.weight>budget:
+            break
+        used_budget+=min_edge.weight
         forest.add(non_tree_node)
-        forest_edges.append(min_edge)
         for edge in graph[non_tree_node]:
             pq.put(edge)
+
+    return used_budget
 
 
 
@@ -97,29 +101,7 @@ edges=int(input())
 all_connected_nodes=set()
 network=[]
 graph=fill_graph(edges)
-#print(graph)
-# print(all_connected_nodes)
-# print(network)
-forest=set()
-forest_edges=[]
-sum_=0
-for node,edges_ in graph.items():
-    # if node not in all_connected_nodes:
-    #     continue
-    if node in forest:
-        #print(node)
-        continue
-    prim(node,graph,forest,forest_edges)
-    #print(node)
-
-
-for edge in sorted(forest_edges,key= lambda x:( x.weight)):
-    if edge.weight<=budget:
-        budget-=edge.weight
-        sum_+=edge.weight
-    #print(f"{edge.first} - {edge.second}==weight=  {edge.weight}")
-
-print(f"Budget used: {sum_}")
 #print(all_connected_nodes)
-#print(network)
+sum_=prim(all_connected_nodes,graph)
+print(f"Budget used: {sum_}")
 
