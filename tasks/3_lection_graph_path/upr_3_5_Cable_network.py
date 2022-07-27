@@ -76,9 +76,9 @@ def prim(node,graph,forest,forest_edges):
     while not pq.empty():
         min_edge=pq.get()
         non_tree_node=-1
-        if min_edge.first in forest and min_edge.second not in forest:
+        if min_edge.first in forest and min_edge.second not in forest and min_edge.first not in all_connected_nodes:
             non_tree_node=min_edge.second
-        elif min_edge.second in forest and min_edge.first not in forest:
+        elif min_edge.second in forest and min_edge.first not in forest and min_edge.first not in all_connected_nodes:
             non_tree_node=min_edge.first
         if non_tree_node==-1:
             continue
@@ -117,9 +117,9 @@ for edge in sorted(forest_edges,key= lambda x:( x.weight)):
     if edge.weight<=budget:
         budget-=edge.weight
         sum_+=edge.weight
-        #print(f"{edge.first} - {edge.second}==weight=  {edge.weight}")
+    #print(f"{edge.first} - {edge.second}==weight=  {edge.weight}")
 
 print(f"Budget used: {sum_}")
-# print(all_connected_nodes)
-# print(network)
+#print(all_connected_nodes)
+#print(network)
 
