@@ -19,7 +19,7 @@ def prove_if_coordinates_are_in_range(row,col,rows,cols):
 
 def print_matrix(mat):
     for row in mat:
-        print("|".join([str(x) for x in row]))
+        print("".join([str(x) for x in row]))
 
 def number_nodes_in_matrix(mat):
     counter=0
@@ -40,8 +40,6 @@ def create_graph_from_matrix(mat):
                 current_node_name=mat[row][col]
                 if current_node_name not in graph:
                     graph[current_node_name]=[]
-
-
                 if prove_if_coordinates_are_in_range(row - 1, col, rows, cols) and mat[row-1][col]!="*":
                     above_node_name = mat[row - 1][col]
                     graph[current_node_name].append(Edge(current_node_name, above_node_name, 10))
@@ -141,12 +139,15 @@ def generate_path_from_source_to_target(target_,parents,mat):
 def mark_path_on_the_map(path:dict,mat):
     matrix_=mat.copy()
     for node,coor in path.items():
-        matrix_[coor['row']][coor['col']]='P'
+        matrix_[coor['row']][coor['col']]='.'
 
     for row in range(len(matrix_)):
         for col in range(len(matrix_[row])):
             if isinstance(matrix_[row][col], int):
-                matrix_[row][col]='-'
+                matrix_[row][col]=' '
+            elif matrix_[row][col]=='*':
+                matrix_[row][col] = '#'
+
 
     return matrix_
 
@@ -176,7 +177,26 @@ matrix=[["**********************************************************************
         ["*--------------------------------**-------------------------**----------------------*"],
         ["*************************************************************************************"],
         ]
-matrix=[list(x[0]) for x in matrix]
+
+matrix_2=[["*******************************************"],
+          ["*-----------------------------------------*"],
+          ["*----------------------**-----------------*"],
+          ["*----------------------**-----------------*"],
+          ["*----------------------**-----------------*"],
+          ["*************************-----*************"],
+          ["**----------------------------------------*"],
+          ["**-----------------------------**---------*"],
+          ["**-----------------------------**---------*"],
+          ["************************************----***"],
+          ["**------------**--------------------------*"],
+          ["**------------**--------------------------*"],
+          ["**----------------------------------------*"],
+          ["*******************************************"],
+
+
+        ]
+#matrix=[list(x[0]) for x in matrix]
+matrix=[list(x[0]) for x in matrix_2]
 new_matrix=number_nodes_in_matrix(matrix)
 #print_matrix(new_matrix)
 test_matrix=[[1,2,3],
@@ -186,8 +206,8 @@ test_matrix=[[1,2,3],
 graph=create_graph_from_matrix(new_matrix)
 #print_matrix(new_matrix)
 #print(graph)
-start_node=1
-target_node=1353
+start_node=170 #3
+target_node=364
 distances,parents=find_shortest_way_between_two_nodes(start_node,target_node,graph)
 #print(parents)
 path,dict_path=list(generate_path_from_source_to_target(target_node,parents,new_matrix))
