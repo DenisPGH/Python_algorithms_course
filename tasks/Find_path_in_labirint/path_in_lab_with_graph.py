@@ -48,8 +48,11 @@ for i in range(len(matrix)):
         if j < len(matrix[i]) - 1:
             add(adj_list, matrix[i][j], matrix[i][j+1])
         if i < len(matrix[i]) - 1:
-            for x in range(max(0, j - 1), min(len(matrix[i+1]), j+2)):
-                add(adj_list, matrix[i][j], matrix[i+1][x])
+            try:
+                for x in range(max(0, j - 1), min(len(matrix[i+1]), j+2)):
+                    add(adj_list, matrix[i][j], matrix[i+1][x])
+            except:
+                print('error')
 
 import pprint
 pprint.pprint(adj_list)
