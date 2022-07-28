@@ -45,37 +45,37 @@ def create_graph_from_matrix(mat):
                 if prove_if_coordinates_are_in_range(row - 1, col, rows, cols) and mat[row-1][col]!="*":
                     above_node_name = mat[row - 1][col]
                     graph[current_node_name].append(Edge(current_node_name, above_node_name, 10))
-                    if above_node_name not in graph:
-                        graph[above_node_name] = []
-                    graph[above_node_name].append(Edge(above_node_name,current_node_name,  10))
+                    # if above_node_name not in graph:
+                    #     graph[above_node_name] = []
+                    # graph[above_node_name].append(Edge(current_node_name,above_node_name,  10))
 
 
 
                 if prove_if_coordinates_are_in_range(row + 1, col, rows, cols) and mat[row+1][col]!="*":
                     down_node_name = mat[row + 1][col]
                     graph[current_node_name].append(Edge(current_node_name, down_node_name, 10))
-                    if down_node_name not in graph:
-                        graph[down_node_name]=[]
-                    graph[down_node_name].append(Edge(down_node_name,current_node_name,  10))
+                    # if down_node_name not in graph:
+                    #     graph[down_node_name]=[]
+                    # graph[down_node_name].append(Edge(current_node_name,down_node_name,  10))
 
 
 
-                if prove_if_coordinates_are_in_range(row, col-1, rows, cols) and mat[row][-1]!="*":
+                if prove_if_coordinates_are_in_range(row, col-1, rows, cols) and mat[row][col-1]!="*":
                     left_node_name = mat[row][col-1]
                     graph[current_node_name].append(Edge(current_node_name, left_node_name, 10))
-                    if left_node_name not in graph:
-                        graph[left_node_name] = []
-                    graph[left_node_name].append(Edge(left_node_name,current_node_name, 10))
+                    # if left_node_name not in graph:
+                    #     graph[left_node_name] = []
+                    # graph[left_node_name].append(Edge(current_node_name,left_node_name, 10))
 
 
 
 
-                if prove_if_coordinates_are_in_range(row, col+1, rows, cols) and mat[row][+1]!="*":
+                if prove_if_coordinates_are_in_range(row, col+1, rows, cols) and mat[row][col+1]!="*":
                     right_node_name = mat[row][col+1]
                     graph[current_node_name].append(Edge(current_node_name, right_node_name, 10))
-                    if right_node_name not in graph:
-                        graph[right_node_name] = []
-                    graph[right_node_name].append(Edge(right_node_name,current_node_name,  10))
+                    # if right_node_name not in graph:
+                    #     graph[right_node_name] = []
+                    # graph[right_node_name].append(Edge(current_node_name,right_node_name,  10))
 
 
     return graph
@@ -91,7 +91,7 @@ def find_shortest_way_between_two_nodes(start,target,graph):
     parents = {}
     visited = {}
     for nod in graph:
-        distances[nod] = float('-inf')
+        distances[nod] = float('inf')
         parents[nod] = None
         visited[nod] = False
     #value_of_nodes_in_graph=len(graph)
@@ -113,17 +113,42 @@ def find_shortest_way_between_two_nodes(start,target,graph):
     return distances,parents
 
 
-def generate_path_from_source_to_target(target_,parents):
+def generate_path_from_source_to_target(target_,parents,mat):
     """
     1.this function got the target and parents lists
     2.return the shortes path to the target
      """
     path = deque()
+    end_path={}
     node = target_
     while node is not None:
         path.appendleft(node)
         node = parents[node]
-    return path
+
+    for row in range(len(mat)):
+        for col in range(len(mat[row])):
+            if mat[row][col] in path:
+                before=mat[row][col]
+                # mat[row][col]='P'
+                end_path[before]={}
+                end_path[before]['row']=row
+                end_path[before]['col']=col
+
+
+    return path,end_path
+
+
+def mark_path_on_the_map(path:dict,mat):
+    matrix_=mat.copy()
+    for node,coor in path.items():
+        matrix_[coor['row']][coor['col']]='P'
+
+    for row in range(len(matrix_)):
+        for col in range(len(matrix_[row])):
+            if isinstance(matrix_[row][col], int):
+                matrix_[row][col]='-'
+
+    return matrix_
 
 
 
@@ -159,13 +184,16 @@ test_matrix=[[1,2,3],
              [7,8,9]]
 
 graph=create_graph_from_matrix(new_matrix)
-print_matrix(new_matrix)
-print(graph)
+#print_matrix(new_matrix)
+#print(graph)
 start_node=1
-target_node=20
+target_node=1353
 distances,parents=find_shortest_way_between_two_nodes(start_node,target_node,graph)
-path=list(generate_path_from_source_to_target(target_node,parents))
-print(path)
+#print(parents)
+path,dict_path=list(generate_path_from_source_to_target(target_node,parents,new_matrix))
+#print(dict_path)
+final_matrix=mark_path_on_the_map(dict_path,new_matrix)
+print_matrix(final_matrix)
 
 
 
