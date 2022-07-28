@@ -95,6 +95,8 @@ G = nx.DiGraph(A)
 print(G.graph)
 print(G.number_of_edges())
 print(list(G.edges.data())[0][2]['weight'])
+print(list(G.edges.data()))
+print(list(G.nodes.get_nodes_atributs()))
 #pos = [[0,0], [0,1], [1,0], [1,1]]
 #nx.draw(G,pos)
 #plt.show()
