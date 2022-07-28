@@ -56,5 +56,5 @@ matrix=[list(x[0]) for x in matrix]
 #print(matrix)
 
 all_paths_in_labirint(1,1,matrix,'',[])
-print(Counter.COUNTER) # taked too long
+print(Counter.COUNTER) # taked too long more 5 min
 
