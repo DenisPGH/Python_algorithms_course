@@ -55,6 +55,20 @@ def create_graph_from_matrix(mat):
                     graph[current_node_name][f"{current_node_name}-{right_node_name}"]=(Edge(current_node_name, right_node_name, 10,'right'))
 
 
+                if prove_if_coordinates_are_in_range(row - 1, col-1, rows, cols) and mat[row-1][col-1]!="*":
+                    up_left_node_name = mat[row - 1][col-1]
+                    graph[current_node_name][f"{current_node_name}-{up_left_node_name}"]=(Edge(current_node_name, up_left_node_name, 14,'up-left'))
+                if prove_if_coordinates_are_in_range(row + 1, col+1, rows, cols) and mat[row+1][col+1]!="*":
+                    down_right_node_name = mat[row + 1][col+1]
+                    graph[current_node_name][f"{current_node_name}-{down_right_node_name}"]=(Edge(current_node_name, down_right_node_name, 14,'down-right'))
+                if prove_if_coordinates_are_in_range(row+1, col-1, rows, cols) and mat[row+1][col-1]!="*":
+                    down_left_node_name = mat[row+1][col-1]
+                    graph[current_node_name][f"{current_node_name}-{down_left_node_name}"]=(Edge(current_node_name, down_left_node_name, 14,'down-left'))
+                if prove_if_coordinates_are_in_range(row-1, col+1, rows, cols) and mat[row-1][col+1]!="*":
+                    up_right_node_name = mat[row-1][col+1]
+                    graph[current_node_name][f"{current_node_name}-{up_right_node_name}"]=(Edge(current_node_name, up_right_node_name, 14,'up-right'))
+
+
     return graph
 
 def find_shortest_way_between_two_nodes(start,target,graph):
@@ -215,7 +229,7 @@ graph=create_graph_from_matrix(new_matrix)
 #print_matrix(new_matrix)
 #print(graph)
 start_node=3 #3
-target_node=12 # 364
+target_node=200 # 364
 distances,parents,directions=find_shortest_way_between_two_nodes(start_node,target_node,graph)
 #print(len(list(directions)))
 path,dict_path=list(generate_path_from_source_to_target(target_node,parents,new_matrix))
@@ -225,6 +239,10 @@ print_matrix(final_matrix)
 #print(parents)
 
 comand=commands_to_the_target(list(path),graph)
+
+
+for step,info in comand.items():
+
 
 print(comand)
 
