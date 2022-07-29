@@ -151,11 +151,9 @@ def commands_to_the_target(path:list,graph):
                 step += 1
             prev_dir=cur_dir
         else:
-            dir='end'
-            weight=0
-            commands[step] = {}
-            commands[step][dir] = cur_dir
-            commands[step][dist] = weight
+            commands[step] = []
+            commands[step].append("END")
+
 
 
     return commands
@@ -216,12 +214,12 @@ test_matrix=[[1,2,3],
 graph=create_graph_from_matrix(new_matrix)
 #print_matrix(new_matrix)
 #print(graph)
-start_node=100 #3
-target_node=200 # 364
+start_node=3 #3
+target_node=12 # 364
 distances,parents,directions=find_shortest_way_between_two_nodes(start_node,target_node,graph)
 #print(len(list(directions)))
 path,dict_path=list(generate_path_from_source_to_target(target_node,parents,new_matrix))
-print(path)
+#print(path)
 final_matrix=mark_path_on_the_map(dict_path,new_matrix)
 print_matrix(final_matrix)
 #print(parents)
