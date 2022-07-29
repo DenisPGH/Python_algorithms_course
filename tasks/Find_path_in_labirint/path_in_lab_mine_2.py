@@ -1,6 +1,13 @@
 from collections import deque
 from queue import PriorityQueue
 
+# import pyttsx3
+#
+# speaker = pyttsx3.init()
+# speaker.setProperty("rate", 150)
+# speaker.setProperty("voice", 'HKEY_LOCAL_MACHINE\\SOFTWARE\\Microsoft\\Speech\\Voices\\Tokens\\TTS_MS_EN-US_ZIRA_11.0')
+
+
 
 class Edge:
     def __init__(self,source,destination,weight,direction=None):
@@ -23,6 +30,12 @@ def print_matrix(mat):
         print("".join([str(x) for x in row]))
 
 def number_nodes_in_matrix(mat):
+    """
+
+    :param mat: matrix
+    :return: put name on every non wall cells
+    """
+
     counter=0
     for row in range(len(mat)):
         for col in range(len(mat[row])):
@@ -32,6 +45,12 @@ def number_nodes_in_matrix(mat):
     return mat
 
 def create_graph_from_matrix(mat):
+    """
+
+    :param mat: matrix with each sell unique name
+    :return: graph {name:{'name': Edge,}} , connected each cell with its all connected nodes in all directions(8 nodes)
+    """
+
     graph={}
     rows=len(mat)
     for row in range(rows):
@@ -73,14 +92,13 @@ def create_graph_from_matrix(mat):
 
 def find_shortest_way_between_two_nodes(start,target,graph):
     """
-    1. got graph dict with all nodes, weighs
+    1. got graph dict with all nodes, weighs, start node, and target node name
     2. return 2 collections:
     - distance(all short distance between start and custom node)
     - parents( each node and its parents node, from it came from)
     """
     distances = {}
     parents = {}
-    directions=deque()
     for nod in graph:
         distances[nod] = float('inf')
         parents[nod] = None
@@ -97,13 +115,13 @@ def find_shortest_way_between_two_nodes(start,target,graph):
                 distances[edge.destination]=new_distance
                 parents[edge.destination]=node
                 pq.put((new_distance,edge.destination))
-    return distances,parents,directions
+    return distances,parents
 
 
 def generate_path_from_source_to_target(target_,parents,mat):
     """
     1.this function got the target and parents lists
-    2.return the shortes path to the target
+    2.return the path-list with name nodes from the start to the target, and exact location of the nodes
      """
     path = deque()
     end_path={}
@@ -126,6 +144,12 @@ def generate_path_from_source_to_target(target_,parents,mat):
 
 
 def mark_path_on_the_map(path:dict,mat):
+    """
+
+    :param path:
+    :param mat:
+    :return: new matrix with marked road from start node to the target node
+    """
     matrix_=mat.copy()
     for node,coor in path.items():
         matrix_[coor['row']][coor['col']]='.'
@@ -142,6 +166,13 @@ def mark_path_on_the_map(path:dict,mat):
 
 
 def commands_to_the_target(path:list,graph):
+    """
+
+    :param path: list with names from the nodes
+    :param graph:
+    :return: the command where shoud go, and the distance in cm
+    """
+
     dir='dir'
     dist='dist'
     commands={}
@@ -167,9 +198,6 @@ def commands_to_the_target(path:list,graph):
         else:
             commands[step] = []
             commands[step].append("END")
-
-
-
     return commands
 
 
@@ -229,8 +257,8 @@ graph=create_graph_from_matrix(new_matrix)
 #print_matrix(new_matrix)
 #print(graph)
 start_node=3 #3
-target_node=200 # 364
-distances,parents,directions=find_shortest_way_between_two_nodes(start_node,target_node,graph)
+target_node=360 # 364
+distances,parents=find_shortest_way_between_two_nodes(start_node,target_node,graph)
 #print(len(list(directions)))
 path,dict_path=list(generate_path_from_source_to_target(target_node,parents,new_matrix))
 #print(path)
@@ -240,11 +268,18 @@ print_matrix(final_matrix)
 
 comand=commands_to_the_target(list(path),graph)
 
-
+text='Go  '
+measure=0
 for step,info in comand.items():
+    if isinstance(info,dict):
+        measure+=info['dist']
+        text+=f"'{info['dir']}' => {info['dist']} cm , then "
+    else:
+        text+=' done!'
 
 
-print(comand)
+#print(comand)
+print(f'{text}. Distance= {measure} cm')
 
 
 
