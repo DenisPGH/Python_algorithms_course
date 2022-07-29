@@ -40,19 +40,19 @@ def create_graph_from_matrix(mat):
             if mat[row][col]!="*":
                 current_node_name=mat[row][col]
                 if current_node_name not in graph:
-                    graph[current_node_name]=[]
+                    graph[current_node_name]={}
                 if prove_if_coordinates_are_in_range(row - 1, col, rows, cols) and mat[row-1][col]!="*":
                     above_node_name = mat[row - 1][col]
-                    graph[current_node_name].append(Edge(current_node_name, above_node_name, 10,'up'))
+                    graph[current_node_name][f"{current_node_name}-{above_node_name}"]=(Edge(current_node_name, above_node_name, 10,'up'))
                 if prove_if_coordinates_are_in_range(row + 1, col, rows, cols) and mat[row+1][col]!="*":
                     down_node_name = mat[row + 1][col]
-                    graph[current_node_name].append(Edge(current_node_name, down_node_name, 10,'down'))
+                    graph[current_node_name][f"{current_node_name}-{down_node_name}"]=(Edge(current_node_name, down_node_name, 10,'down'))
                 if prove_if_coordinates_are_in_range(row, col-1, rows, cols) and mat[row][col-1]!="*":
                     left_node_name = mat[row][col-1]
-                    graph[current_node_name].append(Edge(current_node_name, left_node_name, 10,'left'))
+                    graph[current_node_name][f"{current_node_name}-{left_node_name}"]=(Edge(current_node_name, left_node_name, 10,'left'))
                 if prove_if_coordinates_are_in_range(row, col+1, rows, cols) and mat[row][col+1]!="*":
                     right_node_name = mat[row][col+1]
-                    graph[current_node_name].append(Edge(current_node_name, right_node_name, 10,'right'))
+                    graph[current_node_name][f"{current_node_name}-{right_node_name}"]=(Edge(current_node_name, right_node_name, 10,'right'))
 
 
     return graph
@@ -77,12 +77,11 @@ def find_shortest_way_between_two_nodes(start,target,graph):
         min_distance_to_the_node,node=pq.get() # get the min value in the queue
         if node ==target:
             break
-        for edge in graph[node]:
+        for node_name,edge in graph[node].items():
             new_distance= min_distance_to_the_node+edge.weight
             if new_distance < distances[edge.destination]:
                 distances[edge.destination]=new_distance
                 parents[edge.destination]=node
-                #directions.appendleft((edge.direction,edge.weight))
                 pq.put((new_distance,edge.destination))
     return distances,parents,directions
 
@@ -126,6 +125,41 @@ def mark_path_on_the_map(path:dict,mat):
 
 
     return matrix_
+
+
+def commands_to_the_target(path:list,graph):
+    dir='dir'
+    dist='dist'
+    commands={}
+    cur_dir=''
+    prev_dir=''
+    weight=0
+    step=1
+    same_step_dist=0
+    for each_step_idx in range(len(path)):
+        if each_step_idx<len(path)-1:
+            commands[step] = {}
+            cur_dir=graph[path[each_step_idx]][f"{path[each_step_idx]}-{path[each_step_idx+1]}"].direction
+            weight = graph[path[each_step_idx]][f"{path[each_step_idx]}-{path[each_step_idx + 1]}"].weight
+            same_step_dist += weight
+            if cur_dir ==prev_dir:
+                commands[step-1][dist]=same_step_dist
+            else:
+                commands[step][dir] = cur_dir
+                same_step_dist=weight
+                commands[step][dist] = same_step_dist
+                step += 1
+            prev_dir=cur_dir
+        else:
+            dir='end'
+            weight=0
+            commands[step] = {}
+            commands[step][dir] = cur_dir
+            commands[step][dist] = weight
+
+
+    return commands
+
 
 
 
@@ -182,15 +216,20 @@ test_matrix=[[1,2,3],
 graph=create_graph_from_matrix(new_matrix)
 #print_matrix(new_matrix)
 #print(graph)
-start_node=170 #3
+start_node=100 #3
 target_node=200 # 364
 distances,parents,directions=find_shortest_way_between_two_nodes(start_node,target_node,graph)
-print(len(list(directions)))
+#print(len(list(directions)))
 path,dict_path=list(generate_path_from_source_to_target(target_node,parents,new_matrix))
 print(path)
 final_matrix=mark_path_on_the_map(dict_path,new_matrix)
 print_matrix(final_matrix)
-print(parents)
+#print(parents)
+
+comand=commands_to_the_target(list(path),graph)
+
+print(comand)
+
 
 
 
